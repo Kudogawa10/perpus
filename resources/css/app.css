@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Syne:wght@400;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   MyPerpus Global Styles
+   Black & White Design System
+   ======================================== */
+
+@layer base {
+    :root {
+        --color-brand: #0a0a0a;
+        --color-surface: #fafafa;
+        --color-border: #efefef;
+        --color-muted: #a0a0a0;
+        --color-accent: #c9a84c;
+
+        /* Scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: #c0c0c0 transparent;
+    }
+
+    .dark {
+        --color-brand: #fafafa;
+        --color-surface: #111111;
+        --color-border: #202020;
+        --color-muted: #606060;
+        --color-accent: #c9a84c;
+    }
+
+    *::-webkit-scrollbar { width: 4px; height: 4px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    ::selection {
+        background: rgba(10, 10, 10, 0.12);
+        color: inherit;
+    }
+    .dark ::selection {
+        background: rgba(250, 250, 250, 0.15);
+    }
+}
+
+@layer components {
+    /* ---- Buttons ---- */
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-2.5 rounded-xl
+               bg-perpus-black text-perpus-white dark:bg-perpus-white dark:text-perpus-black
+               font-medium text-sm tracking-wide
+               hover:opacity-90 active:scale-[0.98]
+               transition-all duration-150 shadow-perpus-sm;
+    }
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 px-4 py-3 sm:px-5 sm:py-2.5 rounded-xl
+               bg-transparent border border-perpus-gray-300 dark:border-perpus-gray-700
+               text-perpus-black dark:text-perpus-white
+               font-medium text-sm tracking-wide
+               hover:bg-perpus-gray-50 dark:hover:bg-perpus-gray-800
+               active:scale-[0.98] transition-all duration-150;
+    }
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg
+               text-perpus-gray-600 dark:text-perpus-gray-400
+               hover:bg-perpus-gray-100 dark:hover:bg-perpus-gray-800
+               font-medium text-sm transition-all duration-150;
+    }
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+               bg-perpus-red text-white font-medium text-sm
+               hover:opacity-90 active:scale-[0.98] transition-all duration-150;
+    }
+    .btn-success {
+        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+               bg-perpus-green text-white font-medium text-sm
+               hover:opacity-90 active:scale-[0.98] transition-all duration-150;
+    }
+
+    /* ---- Cards ---- */
+    .card {
+        @apply bg-perpus-white dark:bg-perpus-gray-900
+               border border-perpus-gray-200 dark:border-perpus-gray-800
+               rounded-2xl shadow-perpus-sm;
+    }
+    .card-hover {
+        @apply card hover:shadow-perpus hover:border-perpus-gray-300 dark:hover:border-perpus-gray-700
+               transition-all duration-200 cursor-pointer;
+    }
+
+    /* ---- Form Inputs ---- */
+    .input {
+        @apply w-full px-4 py-2.5 rounded-xl text-sm
+               bg-perpus-gray-50 dark:bg-perpus-gray-800
+               border border-perpus-gray-200 dark:border-perpus-gray-700
+               text-perpus-black dark:text-perpus-white
+               placeholder:text-perpus-gray-400
+               focus:outline-none focus:ring-2 focus:ring-perpus-black/20 dark:focus:ring-perpus-white/20
+               focus:border-perpus-gray-400 dark:focus:border-perpus-gray-500
+               transition-all duration-150;
+    }
+    .input-label {
+        @apply block text-xs font-medium text-perpus-gray-500 dark:text-perpus-gray-400 mb-1.5 uppercase tracking-wide;
+    }
+
+    /* ---- Badges ---- */
+    .badge {
+        @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium;
+    }
+    .badge-black  { @apply badge bg-perpus-black text-white dark:bg-white dark:text-perpus-black; }
+    .badge-gray   { @apply badge bg-perpus-gray-100 dark:bg-perpus-gray-800 text-perpus-gray-700 dark:text-perpus-gray-300; }
+    .badge-green  { @apply badge bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400; }
+    .badge-red    { @apply badge bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400; }
+    .badge-gold   { @apply badge bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400; }
+    .badge-blue   { @apply badge bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400; }
+
+    /* ---- Table ---- */
+    .table-perpus {
+        @apply w-full text-sm text-left;
+    }
+    .table-perpus thead tr {
+        @apply border-b border-perpus-gray-200 dark:border-perpus-gray-800;
+    }
+    .table-perpus thead th {
+        @apply px-4 py-3 text-xs font-semibold uppercase tracking-wider
+               text-perpus-gray-500 dark:text-perpus-gray-400;
+    }
+    .table-perpus tbody tr {
+        @apply border-b border-perpus-gray-100 dark:border-perpus-gray-800/60
+               hover:bg-perpus-gray-50 dark:hover:bg-perpus-gray-800/40
+               transition-colors duration-100;
+    }
+    .table-perpus tbody td {
+        @apply px-4 py-3.5 text-perpus-black dark:text-perpus-gray-100;
+    }
+
+    /* ---- Page Header ---- */
+    .page-header {
+        @apply mb-8;
+    }
+    .page-title {
+        @apply text-xl sm:text-2xl font-display font-semibold text-perpus-black dark:text-perpus-white;
+    }
+    .page-subtitle {
+        @apply text-xs sm:text-sm text-perpus-gray-500 dark:text-perpus-gray-400 mt-1;
+    }
+
+    /* ---- Sidebar Navigation ---- */
+    .nav-item {
+        @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+               text-perpus-gray-600 dark:text-perpus-gray-400
+               hover:bg-perpus-gray-100 dark:hover:bg-perpus-gray-800
+               hover:text-perpus-black dark:hover:text-perpus-white
+               transition-all duration-150;
+    }
+    .nav-item-active {
+        @apply nav-item bg-perpus-black dark:bg-perpus-white
+               text-perpus-white dark:text-perpus-black
+               hover:bg-perpus-black dark:hover:bg-perpus-white
+               hover:text-perpus-white dark:hover:text-perpus-black;
+    }
+
+    /* ---- Book Card ---- */
+    .book-cover {
+        @apply relative overflow-hidden rounded-xl bg-perpus-gray-100 dark:bg-perpus-gray-800
+               aspect-[2/3] shadow-perpus-sm;
+    }
+
+    /* ---- Mobile bottom navigation ---- */
+    .mobile-bottom-nav {
+        @apply fixed bottom-0 left-0 right-0 z-50 bg-perpus-white dark:bg-perpus-gray-900
+               border-t border-perpus-gray-200 dark:border-perpus-gray-800 lg:hidden flex items-center justify-between px-2 py-1 gap-1;
+    }
+    .mobile-bottom-nav a {
+        @apply flex-1 flex flex-col items-center justify-center text-xs text-perpus-gray-600 dark:text-perpus-gray-400 py-1;
+    }
+    .mobile-bottom-nav .nav-icon {
+        @apply w-5 h-5 mb-0.5;
+    }
+
+    /* ---- Topbar mobile search overlay panel ---- */
+    .topbar-search-overlay {
+        @apply fixed inset-0 z-50 bg-black/40 flex items-start;
+    }
+    .topbar-search-panel {
+        @apply w-full p-4 bg-perpus-white dark:bg-perpus-gray-900 border-b border-perpus-gray-100 dark:border-perpus-gray-800;
+    }
+
+    /* ---- Stat Card ---- */
+    .stat-card {
+        @apply card p-6 flex flex-col gap-3;
+    }
+    .stat-number {
+        @apply text-3xl font-display font-bold text-perpus-black dark:text-perpus-white;
+    }
+    .stat-label {
+        @apply text-xs font-medium uppercase tracking-widest text-perpus-gray-400;
+    }
+
+    /* ---- Skeleton Loading ---- */
+    .skeleton {
+        @apply animate-pulse bg-perpus-gray-200 dark:bg-perpus-gray-700 rounded;
+    }
+
+    /* ---- Section Divider ---- */
+    .divider {
+        @apply border-t border-perpus-gray-100 dark:border-perpus-gray-800;
+    }
+}
+
+@layer utilities {
+    .font-display { font-family: 'Syne', system-ui, sans-serif; }
+    .font-serif   { font-family: 'Playfair Display', Georgia, serif; }
+
+    .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-perpus-black to-perpus-gray-600
+               dark:from-perpus-white dark:to-perpus-gray-400;
+    }
+
+    .glass {
+        @apply backdrop-blur-xl bg-white/80 dark:bg-black/80 border border-white/20 dark:border-white/10;
+    }
+
+    .page-container {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    }
+}

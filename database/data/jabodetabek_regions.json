@@ -1,0 +1,20 @@
+{
+  "Jakarta Pusat": ["Gambir", "Tanah Abang", "Menteng", "Senen", "Johar Baru", "Cempaka Putih"],
+  "Jakarta Utara": ["Penjaringan", "Pademangan", "Tanjung Priok", "Koja", "Cilincing", "Kelapa Gading"],
+  "Jakarta Selatan": ["Kebayoran Baru", "Kebayoran Lama", "Cilandak", "Pasar Minggu", "Jagakarsa", "Mampang Prapatan", "Setiabudi"],
+  "Jakarta Barat": ["Grogol Petamburan", "Taman Sari", "Tambora", "Kebon Jeruk", "Cengkareng", "Kalideres"],
+  "Jakarta Timur": ["Matraman", "Kramat Jati", "Pasar Rebo", "Pulo Gadung", "Cakung", "Duren Sawit", "Jatinegara"],
+  "Kepulauan Seribu": ["Pulau Seribu Utara", "Pulau Seribu Selatan"],
+
+  "Bogor": ["Bogor Selatan", "Bogor Utara", "Bogor Tengah", "Bogor Timur", "Bogor Barat", "Tanah Sareal"],
+  "Kabupaten Bogor": ["Cibinong", "Ciawi", "Cisarua", "Tajurhalang", "Dramaga", "Citeureup", "Gunung Putri", "Cileungsi"],
+
+  "Depok": ["Beji", "Bojonggede", "Cilodong", "Cinere", "Limo", "Pancoran Mas", "Sawangan", "Sukmajaya", "Tapos"],
+
+  "Tangerang": ["Benda", "Cipondoh", "Ciledug", "Cibodas", "Karawaci", "Jatiuwung", "Pinang", "Neglasari", "Larangan"],
+  "Kabupaten Tangerang": ["Balaraja", "Cikupa", "Cisauk", "Curug", "Pakuhaji", "Tigaraksa", "Teluknaga", "Panongan", "Legok"],
+  "Tangerang Selatan": ["Serpong", "Serpong Utara", "Pamulang", "Ciputat", "Ciputat Timur", "Pondok Aren", "Setu"],
+
+  "Bekasi": ["Bekasi Barat", "Bekasi Selatan", "Bekasi Timur", "Bekasi Utara", "Bekasi Kota", "Medan Satria", "Jatisampurna"],
+  "Kabupaten Bekasi": ["Cikarang Pusat", "Cikarang Barat", "Cikarang Timur", "Cikarang Utara", "Cikarang Selatan", "Tambun Utara", "Tambun Selatan"]
+}
