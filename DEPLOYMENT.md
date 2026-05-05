@@ -53,10 +53,13 @@ php artisan event:cache
 
 ```bash
 php artisan storage:link
-chmod 600 .env
+chown www-data:www-data .env storage bootstrap/cache
+chmod 640 .env
 find storage bootstrap/cache -type d -exec chmod 775 {} \;
 find storage bootstrap/cache -type f -exec chmod 664 {} \;
 ```
+
+Untuk Docker development dengan bind mount dari host, `.env` perlu bisa dibaca container PHP. Jika container tidak bisa membaca `APP_KEY`, gunakan `chmod 644 .env` di mesin lokal saja.
 
 PDF buku baru disimpan di disk private `local` dan dibuka lewat route terautentikasi `/baca-online/{buku}/pdf`. Konfigurasi Nginx dan Apache di repo juga menolak akses langsung ke `/storage/buku/pdf` dan `/storage/sample-books`.
 

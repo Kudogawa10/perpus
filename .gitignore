@@ -3,6 +3,11 @@
 /public/hot
 /public/storage
 /storage/*.key
+/storage/app/public/avatars/*
+/storage/app/public/buku/cover/*
+/storage/app/public/buku/pdf/*
+/storage/app/public/laporan-buku/*
+/storage/app/public/peminjaman/*
 /storage/framework/cache/*
 !/storage/framework/cache/.gitkeep
 /storage/framework/sessions/*
