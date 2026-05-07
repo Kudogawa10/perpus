@@ -21,6 +21,13 @@ class SettingController extends Controller
             'address' => 'nullable|string|max:1000',
             'footer_text' => 'nullable|string|max:500',
             'card_expiry_years' => 'nullable|integer|min:0|max:10',
+            // Additional settings
+            'app_rating' => 'nullable|numeric|min:0|max:5',
+            'notify_enabled' => 'nullable|boolean',
+            'watermark_enabled' => 'nullable|boolean',
+            'watermark_text' => 'nullable|string|max:255',
+            'help_center_enabled' => 'nullable|boolean',
+            'about_text' => 'nullable|string|max:5000',
         ]);
 
         if ($request->hasFile('brand_logo')) {
@@ -28,7 +35,8 @@ class SettingController extends Controller
             Setting::setValue('brand_logo', $path);
         }
 
-        foreach (['brand_name', 'address', 'footer_text', 'card_expiry_years'] as $k) {
+        foreach (['brand_name', 'address', 'footer_text', 'card_expiry_years',
+                  'app_rating', 'notify_enabled', 'watermark_enabled', 'watermark_text', 'help_center_enabled', 'about_text'] as $k) {
             if ($request->filled($k) || $request->has($k)) {
                 Setting::setValue($k, $request->input($k));
             }

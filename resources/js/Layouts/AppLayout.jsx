@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, usePage, router } from '@inertiajs/react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Home, Library, Users, UserCheck, Settings, Bell, Search, Menu, X, Sun, Moon, LogOut, ChevronDown, BookMarked, ClipboardList, BarChart2, Layers, User, MessageSquare } from 'lucide-react';
 import clsx from 'clsx';
+import debounce from 'lodash/debounce';
 // ============================================
 // Sidebar Nav Items per Role
 // ============================================
@@ -49,6 +50,7 @@ export default function AppLayout({ children, title }) {
     const [notifications, setNotifications] = useState([]);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
+    const [topbarSearch, setTopbarSearch] = useState('');
     const user = auth.user;
     const isAdmin = user?.roles?.includes('admin');
     const isPetugas = user?.roles?.includes('petugas');
@@ -89,6 +91,17 @@ export default function AppLayout({ children, title }) {
             // ignore
         }
     };
+    const debouncedRedirectToKatalog = useCallback(debounce((val) => {
+        try {
+            router.get('/katalog', { search: val }, { replace: true });
+        } finally {
+            setShowMobileSearch(false);
+        }
+    }, 250), []);
+
+    useEffect(() => {
+        return () => debouncedRedirectToKatalog.cancel();
+    }, [debouncedRedirectToKatalog]);
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
     return (<div className="flex h-screen overflow-hidden bg-perpus-gray-50 dark:bg-perpus-black">
 
@@ -177,12 +190,23 @@ export default function AppLayout({ children, title }) {
                     <div className="hidden sm:flex flex-1 max-w-md">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-perpus-gray-400"/>
-                            <input type="search" placeholder="Cari buku, penulis..." className="w-full pl-9 pr-4 py-2 text-sm rounded-xl
+                            <input
+                                type="search"
+                                value={topbarSearch}
+                                onChange={e => setTopbarSearch(e.target.value)}
+                                onKeyDown={e => {
+                                    if (e.key === 'Enter') {
+                                        router.get('/katalog', { search: e.target.value }, { replace: true });
+                                    }
+                                }}
+                                placeholder="Cari buku, penulis..."
+                                className="w-full pl-9 pr-4 py-2 text-sm rounded-xl
                                            bg-perpus-gray-50 dark:bg-perpus-gray-800
                                            border border-perpus-gray-200 dark:border-perpus-gray-700
                                            text-perpus-black dark:text-perpus-white
                                            placeholder:text-perpus-gray-400
-                                           focus:outline-none focus:ring-2 focus:ring-perpus-black/10 dark:focus:ring-perpus-white/10"/>
+                                           focus:outline-none focus:ring-2 focus:ring-perpus-black/10 dark:focus:ring-perpus-white/10"
+                            />
                         </div>
                     </div>
 
@@ -193,7 +217,23 @@ export default function AppLayout({ children, title }) {
                                 <div className="topbar-search-panel" onClick={e => e.stopPropagation()}>
                                     <div className="relative w-full max-w-xl mx-auto">
                                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-perpus-gray-400"/>
-                                        <input autoFocus type="search" placeholder="Cari buku, penulis..." className="w-full pl-9 pr-10 py-2 text-sm rounded-xl bg-perpus-gray-50 dark:bg-perpus-gray-800 border border-perpus-gray-200 dark:border-perpus-gray-700 text-perpus-black dark:text-perpus-white placeholder:text-perpus-gray-400 focus:outline-none focus:ring-2 focus:ring-perpus-black/10 dark:focus:ring-perpus-white/10" />
+                                        <input
+                                            autoFocus
+                                            type="search"
+                                            value={topbarSearch}
+                                            onChange={e => {
+                                                setTopbarSearch(e.target.value);
+                                                debouncedRedirectToKatalog(e.target.value);
+                                            }}
+                                            onKeyDown={e => {
+                                                if (e.key === 'Enter') {
+                                                    router.get('/katalog', { search: e.target.value }, { replace: true });
+                                                    setShowMobileSearch(false);
+                                                }
+                                            }}
+                                            placeholder="Cari buku, penulis..."
+                                            className="w-full pl-9 pr-10 py-2 text-sm rounded-xl bg-perpus-gray-50 dark:bg-perpus-gray-800 border border-perpus-gray-200 dark:border-perpus-gray-700 text-perpus-black dark:text-perpus-white placeholder:text-perpus-gray-400 focus:outline-none focus:ring-2 focus:ring-perpus-black/10 dark:focus:ring-perpus-white/10"
+                                        />
                                         <button onClick={() => setShowMobileSearch(false)} className="absolute right-2 top-1/2 -translate-y-1/2 btn-ghost p-1">
                                             <X className="w-4 h-4"/>
                                         </button>

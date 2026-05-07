@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use App\Jobs\SendPasswordResetLink;
 use Inertia\Inertia;
 
 class PasswordResetLinkController extends Controller
@@ -18,8 +19,9 @@ class PasswordResetLinkController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        Password::sendResetLink($request->only('email'));
+        // Dispatch the sending of the reset link to the queue to keep the request fast.
+        SendPasswordResetLink::dispatch($request->input('email'));
 
-        return back()->with('status', 'Jika email terdaftar, tautan reset password akan dikirim.');
+        return back()->with('status', 'Jika email terdaftar, tautan reset password akan dikirim (dikirim secara asinkron).');
     }
 }

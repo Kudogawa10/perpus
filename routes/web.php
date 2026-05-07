@@ -77,7 +77,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register',[RegisteredUserController::class, 'store']);
     Route::get('/forgot-password',  [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->name('password.email')->middleware('throttle:6,1');
 });
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout')->middleware('auth');
@@ -131,6 +131,9 @@ Route::middleware(['auth', 'role:pengguna|petugas|admin'])->group(function () {
     // Notifications (AJAX)
     Route::get('/notifications', [\App\Http\Controllers\NotificationsController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/mark-read', [\App\Http\Controllers\NotificationsController::class, 'markRead'])->name('notifications.mark_read');
+    // Help Center (simple polled chat)
+    Route::get('/help-center/messages', [\App\Http\Controllers\HelpCenterController::class, 'index'])->name('help.messages');
+    Route::post('/help-center/messages', [\App\Http\Controllers\HelpCenterController::class, 'store'])->name('help.messages.store');
 
     // Kartu (unduh PDF)
     Route::get('/kartu/{user}', [\App\Http\Controllers\KartuController::class, 'download'])->name('kartu.download');

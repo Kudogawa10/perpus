@@ -1,12 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm, Link } from '@inertiajs/react';
 import { Mail, ArrowLeft, Loader2, ArrowRight } from 'lucide-react';
 import AuthLayout from '@/Layouts/AuthLayout';
 import toast from 'react-hot-toast';
 export default function ForgotPassword({ status }) {
     const { data, setData, post, processing, errors } = useForm({ email: '' });
+    const [isValidEmail, setIsValidEmail] = useState(true);
+
+    const handleEmailChange = (e) => {
+        const val = e.target.value;
+        setData('email', val);
+        // simple client-side validation for immediate feedback
+        setIsValidEmail(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val));
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!data.email || !isValidEmail) {
+            toast.error('Masukkan alamat email yang valid sebelum melanjutkan.');
+            return;
+        }
+
         post('/forgot-password', {
             onSuccess: () => toast.success('Link reset password telah dikirim ke email Anda.'),
         });
@@ -20,11 +34,12 @@ export default function ForgotPassword({ status }) {
                     <label className="input-label">Alamat Email</label>
                     <div className="relative">
                         <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-perpus-gray-400"/>
-                        <input type="email" value={data.email} onChange={e => setData('email', e.target.value)} placeholder="nama@email.com" className="input pl-10" autoFocus/>
+                        <input type="email" value={data.email} onChange={handleEmailChange} placeholder="nama@email.com" className="input pl-10" autoFocus/>
                     </div>
                     {errors.email && <p className="text-xs text-perpus-red mt-1">{errors.email}</p>}
+                    {!isValidEmail && data.email && <p className="text-xs text-perpus-red mt-1">Format email tidak valid.</p>}
                 </div>
-                <button type="submit" disabled={processing} className="btn-primary w-full py-3">
+                <button type="submit" disabled={processing || !isValidEmail} className="btn-primary w-full py-3">
                     {processing ? <Loader2 className="w-4 h-4 animate-spin"/> : <><ArrowRight className="w-4 h-4"/> Kirim Link Reset</>}
                 </button>
                 <Link href="/login" className="flex items-center justify-center gap-2 text-sm text-perpus-gray-500 hover:text-perpus-black dark:hover:text-perpus-white transition-colors">

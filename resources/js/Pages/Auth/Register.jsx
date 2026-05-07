@@ -129,6 +129,7 @@ export default function Register({ domisiliOptions = [] }) {
                             <span className="text-xs text-perpus-gray-400">{strengthLabels[strength - 1] || 'Lemah'}</span>
                         </div>)}
                     {errors.password && <p className="text-xs text-perpus-red mt-1">{errors.password}</p>}
+                    <p>Password harus mengandung huruf besar, huruf kecil dan simbol menarik.</p>
                 </div>
 
                 <div>
