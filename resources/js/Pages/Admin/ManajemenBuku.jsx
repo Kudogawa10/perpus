@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, router, useForm } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Search, Edit2, Trash2, Eye, Upload, X, BookOpen, Star, CheckCircle, Loader2 } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Eye, Upload, X, BookOpen, Star, CheckCircle, Loader2, FileDown } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
@@ -188,10 +188,20 @@ export default function ManajemenBuku({ buku, kategori, filters }) {
                         <h1 className="page-title">Manajemen Buku</h1>
                         <p className="page-subtitle">{buku.total.toLocaleString('id-ID')} total koleksi</p>
                     </div>
-                    <button onClick={() => { setEditBuku(undefined); setShowForm(true); }} className="btn-primary">
-                        <Plus className="w-4 h-4"/>
-                        Tambah Buku
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <a
+                            href="/admin/statistik/export/buku"
+                            className="btn-secondary"
+                            title="Export semua data buku ke PDF"
+                        >
+                            <FileDown className="w-4 h-4"/>
+                            Export PDF
+                        </a>
+                        <button onClick={() => { setEditBuku(undefined); setShowForm(true); }} className="btn-primary">
+                            <Plus className="w-4 h-4"/>
+                            Tambah Buku
+                        </button>
+                    </div>
                 </div>
 
                 {/* SEARCH + FILTER */}

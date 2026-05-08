@@ -67,7 +67,8 @@ class StatistikController extends Controller
 
         $pdf = Pdf::loadView('laporan.peminjaman', [
             'peminjaman' => $peminjaman,
-            'tahun' => $tahun,
+            'tahun'      => $tahun,
+            'admin'      => auth()->user(),
         ])->setPaper('a4', 'landscape');
 
         return $pdf->download("laporan-peminjaman-{$tahun}.pdf");
@@ -79,19 +80,21 @@ class StatistikController extends Controller
 
         $pdf = Pdf::loadView('laporan.users', [
             'users' => $users,
+            'admin' => auth()->user(),
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->download('daftar-anggota.pdf');
+        return $pdf->download('laporan-anggota-' . now()->format('Y-m-d') . '.pdf');
     }
 
     public function exportBuku(Request $request)
     {
-        $buku = \App\Models\Buku::with('kategori')->orderBy('judul')->get();
+        $buku = \App\Models\Buku::with('kategoriRelasi')->orderBy('judul')->get();
 
         $pdf = Pdf::loadView('laporan.buku', [
-            'buku' => $buku,
-        ])->setPaper('a4', 'portrait');
+            'buku'  => $buku,
+            'admin' => auth()->user(),
+        ])->setPaper('a4', 'landscape');
 
-        return $pdf->download('laporan-buku.pdf');
+        return $pdf->download('laporan-buku-' . now()->format('Y-m-d') . '.pdf');
     }
 }

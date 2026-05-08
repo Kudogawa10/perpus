@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Eye, UserCheck, Trash2, Users, X, Loader2 } from 'lucide-react';
+import { Search, Eye, UserCheck, Trash2, Users, X, Loader2, FileDown } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
@@ -60,9 +60,19 @@ export default function AdminAnggota({ anggota, filters }) {
     };
     return (<AppLayout title="Manajemen Anggota">
             <div className="max-w-6xl mx-auto space-y-6">
-                <div className="page-header">
-                    <h1 className="page-title">Manajemen Anggota</h1>
-                    <p className="page-subtitle">{anggota.total.toLocaleString('id-ID')} anggota terdaftar</p>
+                <div className="flex items-start justify-between">
+                    <div className="page-header mb-0">
+                        <h1 className="page-title">Manajemen Anggota</h1>
+                        <p className="page-subtitle">{anggota.total.toLocaleString('id-ID')} anggota terdaftar</p>
+                    </div>
+                    <a
+                        href="/admin/statistik/export/users"
+                        className="btn-secondary"
+                        title="Export semua data anggota ke PDF"
+                    >
+                        <FileDown className="w-4 h-4"/>
+                        Export PDF
+                    </a>
                 </div>
 
                 {/* Search + Filter */}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\LaporanBuku;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -35,11 +36,39 @@ class LaporanBukuController extends Controller
     public function tinjau(LaporanBuku $laporanBuku)
     {
         $laporanBuku->update([
-            'status' => 'ditinjau',
-            'ditinjau_admin_id' => auth()->id(),
-            'ditinjau_pada' => now(),
+            'status'           => 'ditinjau',
+            'ditinjau_admin_id'=> auth()->id(),
+            'ditinjau_pada'    => now(),
         ]);
 
         return back()->with('success', 'Laporan ditandai sudah ditinjau.');
+    }
+
+    public function export(Request $request)
+    {
+        $query = LaporanBuku::with(['buku', 'petugas', 'adminPeninjau'])->latest();
+
+        if ($status = $request->get('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('buku', fn ($b) => $b->where('judul', 'like', "%{$search}%"))
+                    ->orWhereHas('petugas', fn ($p) => $p->where('name', 'like', "%{$search}%"))
+                    ->orWhere('kondisi_buku', 'like', "%{$search}%")
+                    ->orWhere('catatan', 'like', "%{$search}%");
+            });
+        }
+
+        $laporan = $query->get();
+
+        $pdf = Pdf::loadView('laporan.laporan_petugas', [
+            'laporan' => $laporan,
+            'admin'   => auth()->user(),
+            'filters' => $request->only('search', 'status'),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-petugas-' . now()->format('Y-m-d') . '.pdf');
     }
 }

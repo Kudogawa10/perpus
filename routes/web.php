@@ -222,6 +222,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/statistik/export',    [StatistikController::class, 'export'])->name('statistik.export');
     Route::get('/statistik/export/users', [StatistikController::class, 'exportUsers'])->name('statistik.export.users');
     Route::get('/statistik/export/buku', [StatistikController::class, 'exportBuku'])->name('statistik.export.buku');
+    Route::get('/laporan-buku/export', [AdminLaporanBukuController::class, 'export'])->name('laporan-buku.export');
     Route::get('/laporan-buku',        [AdminLaporanBukuController::class, 'index'])->name('laporan-buku.index');
     Route::post('/laporan-buku/{laporanBuku}/tinjau', [AdminLaporanBukuController::class, 'tinjau'])->name('laporan-buku.tinjau');
 

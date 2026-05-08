@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { router } from '@inertiajs/react';
+import { FileDown } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import clsx from 'clsx';
 
@@ -14,9 +15,19 @@ export default function AdminLaporanBuku({ laporan, filters }) {
     return (
         <AppLayout title="Laporan Buku Petugas">
             <div className="max-w-7xl mx-auto space-y-6">
-                <div className="page-header">
-                    <h1 className="page-title">Laporan Buku dari Petugas</h1>
-                    <p className="page-subtitle">Monitoring stok, kondisi buku, dan bukti penyerahan.</p>
+                <div className="flex items-start justify-between">
+                    <div className="page-header mb-0">
+                        <h1 className="page-title">Laporan Buku dari Petugas</h1>
+                        <p className="page-subtitle">Monitoring stok, kondisi buku, dan bukti penyerahan.</p>
+                    </div>
+                    <a
+                        href={`/admin/laporan-buku/export?${new URLSearchParams(filters).toString()}`}
+                        className="btn-secondary"
+                        title="Export laporan petugas ke PDF"
+                    >
+                        <FileDown className="w-4 h-4"/>
+                        Export PDF
+                    </a>
                 </div>
 
                 <form onSubmit={doSearch} className="flex flex-wrap gap-3">
