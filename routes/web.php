@@ -206,6 +206,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Petugas
     Route::get('/petugas',              [AdminPetugasController::class, 'index'])->name('petugas.index');
+    Route::get('/petugas/export',       [AdminPetugasController::class, 'export'])->name('petugas.export');
     Route::post('/petugas',             [AdminPetugasController::class, 'store'])->name('petugas.store');
     Route::put('/petugas/{petugas}',    [AdminPetugasController::class, 'update'])->name('petugas.update');
     Route::delete('/petugas/{petugas}', [AdminPetugasController::class, 'destroy'])->name('petugas.destroy');

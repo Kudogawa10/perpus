@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm, router } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Edit2, Trash2, Upload, X, Loader2, UserCheck } from 'lucide-react';
+import { Plus, Edit2, Trash2, Upload, X, Loader2, UserCheck, Download } from 'lucide-react';
 import AppLayout from '@/Layouts/AppLayout';
 import toast from 'react-hot-toast';
 import clsx from 'clsx';
@@ -115,9 +115,18 @@ export default function AdminPetugas({ petugas }) {
                         <h1 className="page-title">Manajemen Petugas</h1>
                         <p className="page-subtitle">{petugas.length} petugas aktif</p>
                     </div>
-                    <button onClick={() => { setEditData(undefined); setShowForm(true); }} className="btn-primary">
-                        <Plus className="w-4 h-4"/> Tambah Petugas
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <a
+                            href="/admin/petugas/export"
+                            className="btn-secondary"
+                            title="Export data petugas ke PDF formal"
+                        >
+                            <Download className="w-4 h-4"/> Export PDF
+                        </a>
+                        <button onClick={() => { setEditData(undefined); setShowForm(true); }} className="btn-primary">
+                            <Plus className="w-4 h-4"/> Tambah Petugas
+                        </button>
+                    </div>
                 </div>
 
                 {petugas.length === 0 ? (<div className="card p-16 text-center">

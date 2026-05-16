@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\{User, Petugas};
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{Hash, Storage};
 use Illuminate\Validation\Rules\Password;
@@ -18,6 +19,22 @@ class PetugasController extends Controller
         return Inertia::render('Admin/Petugas', [
             'petugas' => $petugas,
         ]);
+    }
+
+    public function export()
+    {
+        $petugas = Petugas::with('user')
+            ->orderBy('bagian')
+            ->orderBy('jabatan')
+            ->orderBy(User::select('name')->whereColumn('users.id', 'petugas.user_id'))
+            ->get();
+
+        $pdf = Pdf::loadView('laporan.petugas', [
+            'petugas' => $petugas,
+            'admin'   => auth()->user(),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-petugas-' . now()->format('Y-m-d') . '.pdf');
     }
 
     public function store(Request $request)
