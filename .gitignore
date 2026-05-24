@@ -18,6 +18,11 @@
 !/storage/logs/.gitkeep
 /storage/app/private/*
 !/storage/app/private/.gitkeep
+
+# Environment files
+.env
+.env.local
+.env.*.local
 /vendor
 /bootstrap/cache/*.php
 !/bootstrap/cache/.gitkeep
