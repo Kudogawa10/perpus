@@ -1,2 +1,12 @@
+[build]
+builder = "dockerfile"
+dockerfile = "Dockerfile"
+
+[deploy]
+startCommand = "docker/start.sh"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
 [variables]
 RAILPACK_PHP_VERSION = "8.4"
+PORT = "8080"
