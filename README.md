@@ -352,3 +352,4 @@ MIT License — bebas digunakan dan dimodifikasi.
 ## 👨‍💻 Dikembangkan dengan MyPerpus
 
 Built with ❤️ menggunakan **Laravel 12**, **React**, **Inertia.js**, dan **Tailwind CSS**
+# perpus
