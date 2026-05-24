@@ -4,9 +4,9 @@
 #  Penggunaan: make <perintah>
 ##############################################################
 
-.PHONY: help up down restart build fresh logs shell \
+.PHONY: help up down restart build fresh setup-env logs shell \
         migrate seed migrate-fresh artisan composer npm \
-        tinker test cc storage-link
+        tinker test cc storage-link logs-queue logs-scheduler logs-node logs-mailpit
 
 # ─── Warna terminal ──────────────────────────────────────────
 GREEN  = \033[0;32m
@@ -28,8 +28,10 @@ help:
 ## up          → Jalankan semua container (background)
 up:
 	@echo "$(GREEN)▶ Menjalankan MyPerpus...$(RESET)"
+	@$(MAKE) setup-env
 	docker compose up -d
 	@echo "$(GREEN)✓ Aplikasi berjalan di http://localhost:8000$(RESET)"
+	@echo "$(GREEN)✓ Mailpit tersedia di http://localhost:8025$(RESET)"
 
 ## down        → Hentikan semua container
 down:
@@ -48,16 +50,22 @@ build:
 ## fresh       → Hapus semua container + volume, mulai dari nol
 fresh:
 	@echo "$(YELLOW)⚠ Menghapus semua data dan container...$(RESET)"
+	@$(MAKE) setup-env
 	docker compose down -v --remove-orphans
 	docker compose up -d --build
 	@$(MAKE) setup
 
 # ─── Setup awal ──────────────────────────────────────────────
+## setup-env   → Buat .env Docker jika belum ada
+setup-env:
+	@test -f .env || cp .env.docker .env
+
 ## setup       → Setup awal project (install, migrate, seed)
 setup:
 	@echo "$(CYAN)⚙ Setup awal MyPerpus...$(RESET)"
+	@$(MAKE) setup-env
 	@$(MAKE) composer-install
-	docker compose exec php php artisan key:generate
+	docker compose exec php php artisan key:generate --force
 	docker compose exec php php artisan migrate --force
 	docker compose exec php php artisan db:seed --force
 	docker compose exec php php artisan storage:link
@@ -79,6 +87,22 @@ logs-nginx:
 ## logs-mysql  → Lihat log MySQL saja
 logs-mysql:
 	docker compose logs -f mysql
+
+## logs-queue  → Lihat log queue worker
+logs-queue:
+	docker compose logs -f queue
+
+## logs-scheduler → Lihat log scheduler
+logs-scheduler:
+	docker compose logs -f scheduler
+
+## logs-node   → Lihat log Vite
+logs-node:
+	docker compose logs -f node
+
+## logs-mailpit → Lihat log Mailpit
+logs-mailpit:
+	docker compose logs -f mailpit
 
 # ─── Shell akses ─────────────────────────────────────────────
 ## shell       → Masuk ke shell container PHP

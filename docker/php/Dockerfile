@@ -1,21 +1,16 @@
-###############################################################
-#  MyPerpus — PHP 8.4 FPM Image
-#  Base: php:8.4-fpm-alpine
-###############################################################
-
 FROM php:8.4-fpm-alpine
 
 LABEL maintainer="MyPerpus Dev Team"
-LABEL description="PHP 8.4 FPM for MyPerpus Laravel Application"
+LABEL description="PHP 8.4 FPM runtime for local Laravel development"
 
-# ── System dependencies ──────────────────────────────────────
+ARG UID=1000
+ARG GID=1000
+
 RUN apk add --no-cache \
-    # Build tools
     autoconf \
     gcc \
     g++ \
     make \
-    # Libraries
     libpng-dev \
     libjpeg-turbo-dev \
     libwebp-dev \
@@ -25,19 +20,16 @@ RUN apk add --no-cache \
     oniguruma-dev \
     libxml2-dev \
     curl-dev \
-    # Tools
+    mysql-client \
     git \
     curl \
     unzip \
     bash \
     file \
-    # Node.js (untuk build jika perlu)
     nodejs \
-    npm
+    npm \
+    shadow
 
-# ── PHP Extensions ───────────────────────────────────────────
-# Beberapa extension seperti pdo, tokenizer, dan fileinfo sudah tersedia
-# di build PHP resmi, jadi tidak perlu di-install ulang.
 RUN docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
@@ -53,26 +45,25 @@ RUN docker-php-ext-configure gd \
         xml \
         exif \
         opcache \
+        sockets \
         pcntl
 
-# ── Redis extension (via PECL) ───────────────────────────────
 RUN yes '' | pecl install redis \
     && docker-php-ext-enable redis
 
-# ── Composer 2 ───────────────────────────────────────────────
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# ── Create www-data user group ───────────────────────────────
-RUN addgroup -g 1000 -S www-data 2>/dev/null || true \
-    && adduser -u 1000 -S www-data -G www-data 2>/dev/null || true
+RUN addgroup -g "${GID}" -S laravel \
+    && adduser -u "${UID}" -S laravel -G laravel \
+    && sed -i 's/^user = .*/user = laravel/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^group = .*/group = laravel/' /usr/local/etc/php-fpm.d/www.conf
 
-# ── Work directory ────────────────────────────────────────────
 WORKDIR /var/www/html
 
-# ── Set permissions ───────────────────────────────────────────
-RUN chown -R www-data:www-data /var/www/html
+COPY entrypoint.sh /usr/local/bin/docker-entrypoint
+RUN chmod +x /usr/local/bin/docker-entrypoint
 
-# ── Expose FPM port ───────────────────────────────────────────
 EXPOSE 9000
 
+ENTRYPOINT ["docker-entrypoint"]
 CMD ["php-fpm"]

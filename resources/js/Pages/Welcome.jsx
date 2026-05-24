@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { BookOpen, ArrowRight, Search, BookMarked, Globe, Shield, Zap, ChevronDown } from 'lucide-react';
+import { BookOpen, ArrowRight, Search, BookMarked, Globe, Shield, Zap, ChevronDown, Instagram, Facebook, Music2, MapPin, Navigation, ExternalLink } from 'lucide-react';
 const stats = [
     { num: '10.000+', label: 'Koleksi Buku' },
     { num: '5.000+', label: 'Anggota Aktif' },
@@ -35,6 +35,29 @@ const katList = [
     '🧠 Filsafat', '📊 Ekonomi', '🧩 Psikologi', '🎓 Pendidikan',
     '✍️ Sastra', '☪️ Agama', '🏥 Kesehatan', '🎨 Seni & Budaya',
 ];
+const socialLinks = [
+    {
+        label: 'Instagram',
+        handle: '@di.fi.bi',
+        href: 'https://www.instagram.com/di.fi.bi?igsh=dm9tN2JzNDJtY3V1',
+        icon: Instagram,
+    },
+    {
+        label: 'Facebook',
+        handle: 'DIFIBI',
+        href: 'https://www.facebook.com/share/193fFbu9FV/',
+        icon: Facebook,
+    },
+    {
+        label: 'TikTok',
+        handle: '@zcseskduszc',
+        href: 'https://www.tiktok.com/@zcseskduszc?_r=1&_t=ZS-96cpdY6qHGm',
+        icon: Music2,
+    },
+];
+const libraryAddress = 'Jl. Barokah No. 6, Wanaherang, Kec. Gunungputri, Kabupaten Bogor, Jawa Barat 16965';
+const mapShareUrl = 'https://maps.app.goo.gl/btDWVZMTL7w4v76fA';
+const mapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.770389040615!2d106.93749217416851!3d-6.423540562816323!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69eae99f5ccb45%3A0x343a14e466d07009!2sSMKN%201%20Gunungputri!5e0!3m2!1sid!2sid!4v1779616632406!5m2!1sid!2sid';
 export default function Welcome() {
     const [scrollY, setScrollY] = useState(0);
     useEffect(() => {
@@ -180,6 +203,76 @@ export default function Welcome() {
                                 {kat}
                             </motion.div>))}
                     </div>
+                </div>
+            </section>
+
+            {/* ABOUT */}
+            <section id="about" className="py-24 max-w-6xl mx-auto px-6">
+                <div className="grid grid-cols-1 lg:grid-cols-[0.95fr_1.05fr] gap-8 items-stretch">
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex flex-col justify-center">
+                        <span className="text-xs font-semibold uppercase tracking-widest text-perpus-gold mb-3">
+                            About
+                        </span>
+                        <h2 className="font-display font-bold text-3xl sm:text-4xl text-perpus-black dark:text-perpus-white mb-4">
+                            Perpustakaan DIFIBI
+                        </h2>
+                        <p className="text-perpus-gray-500 dark:text-perpus-gray-400 leading-relaxed mb-8 max-w-xl">
+                            Ikuti kanal resmi perpustakaan untuk kabar kegiatan literasi, informasi koleksi, dan pembaruan layanan.
+                        </p>
+
+                        <div className="space-y-5">
+                            <div className="card p-6">
+                                <div className="flex gap-4">
+                                    <div className="w-11 h-11 rounded-xl bg-perpus-gray-100 dark:bg-perpus-gray-800 flex items-center justify-center flex-shrink-0">
+                                        <MapPin className="w-5 h-5 text-perpus-black dark:text-perpus-white"/>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-display font-semibold text-lg text-perpus-black dark:text-perpus-white mb-2">
+                                            Alamat Perpustakaan
+                                        </h3>
+                                        <p className="text-sm text-perpus-gray-500 dark:text-perpus-gray-400 leading-relaxed mb-4">
+                                            {libraryAddress}
+                                        </p>
+                                        <a href={mapShareUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-perpus-black dark:text-perpus-white hover:text-perpus-gold transition-colors">
+                                            <Navigation className="w-4 h-4"/>
+                                            Buka di Google Maps
+                                            <ExternalLink className="w-3.5 h-3.5"/>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="font-display font-semibold text-lg text-perpus-black dark:text-perpus-white mb-3">
+                                    Sosial Media
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    {socialLinks.map((social, i) => (
+                                        <motion.a key={social.label} href={social.href} target="_blank" rel="noreferrer" initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} whileHover={{ y: -3 }} className="group rounded-2xl border border-perpus-gray-200 dark:border-perpus-gray-800 bg-perpus-white dark:bg-perpus-gray-900 p-4 shadow-perpus-sm hover:shadow-perpus hover:border-perpus-gray-300 dark:hover:border-perpus-gray-700 transition-all">
+                                            <div className="flex items-center justify-between mb-3">
+                                                <social.icon className="w-5 h-5 text-perpus-black dark:text-perpus-white"/>
+                                                <ExternalLink className="w-3.5 h-3.5 text-perpus-gray-300 group-hover:text-perpus-gold transition-colors"/>
+                                            </div>
+                                            <p className="font-semibold text-sm text-perpus-black dark:text-perpus-white">{social.label}</p>
+                                            <p className="text-xs text-perpus-gray-400 mt-1 break-words">{social.handle}</p>
+                                        </motion.a>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.12 }} className="card overflow-hidden min-h-[360px]">
+                        <iframe
+                            title="Lokasi Perpustakaan DIFIBI"
+                            src={mapEmbedUrl}
+                            className="w-full h-full min-h-[360px]"
+                            style={{ border: 0 }}
+                            allowFullScreen
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                        />
+                    </motion.div>
                 </div>
             </section>
 

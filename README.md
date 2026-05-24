@@ -36,7 +36,7 @@
 
 | Layer       | Teknologi                              |
 |-------------|----------------------------------------|
-| Backend     | Laravel 12, PHP 8.2+                   |
+| Backend     | Laravel 12, PHP 8.4                    |
 | Frontend    | React 18, JavaScript, Inertia.js v2    |
 | Styling     | Tailwind CSS 3.4, custom design system |
 | Animasi     | Framer Motion 11                       |
@@ -45,14 +45,65 @@
 | File Upload | Intervention Image (cover) + Storage  |
 | PDF Export  | barryvdh/laravel-dompdf               |
 | Database    | MySQL 8.0+                             |
-| Cache/Queue | Database driver                        |
+| Cache/Queue | Redis                                  |
+| DevOps      | Docker Compose, Nginx, PHP-FPM, Mailpit |
 
 ---
 
-## 🚀 Instalasi
+## 🚀 Instalasi Dengan Docker
+
+Cara ini direkomendasikan untuk pengembangan harian dan pengganti Laragon.
 
 ### Prasyarat
-- PHP >= 8.2
+- Docker Desktop atau Docker Engine + Docker Compose
+- Git
+
+### Langkah Cepat
+
+```bash
+cp .env.docker .env
+docker compose up -d --build
+docker compose exec php php artisan migrate --seed
+docker compose exec php php artisan storage:link
+```
+
+Buka aplikasi di **http://localhost:8000**.
+
+Layanan lokal:
+
+| Layanan | URL / Port |
+|---------|------------|
+| Aplikasi | http://localhost:8000 |
+| Vite HMR | http://localhost:5173 |
+| Mailpit | http://localhost:8025 |
+| MySQL | 127.0.0.1:3306 |
+| Redis | 127.0.0.1:6379 |
+
+Shortcut Makefile:
+
+```bash
+make up
+make setup
+make logs
+make shell
+make test
+```
+
+Konfigurasi database Docker:
+
+```env
+DB_HOST=mysql
+DB_DATABASE=myperpus
+DB_USERNAME=myperpus_user
+DB_PASSWORD=myperpus_pass
+```
+
+---
+
+## 🚀 Instalasi Tanpa Docker
+
+### Prasyarat
+- PHP >= 8.4
 - Composer
 - Node.js >= 18
 - MySQL 8.0+

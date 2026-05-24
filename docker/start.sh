@@ -33,7 +33,7 @@ export DB_HOST="${MYSQLHOST:-${DB_HOST:-127.0.0.1}}"
 export DB_PORT="${MYSQLPORT:-${DB_PORT:-3306}}"
 export DB_DATABASE="${MYSQLDATABASE:-${DB_DATABASE:-railway}}"
 export DB_USERNAME="${MYSQLUSER:-${DB_USERNAME:-root}}"
-export DB_PASSWORD="${MYSQLPASSWORD:-${DB_PASSWORD}}"
+export DB_PASSWORD="${MYSQLPASSWORD:-${DB_PASSWORD:-}}"
 
 # Optionally run migrations if the environment variable is set
 if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
@@ -86,16 +86,3 @@ fi
 
 # Start the Laravel development server (bind to $PORT for Railway)
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"
-
-
-#!/bin/sh
-
-# 🔥 WAIT ENV READY
-php artisan config:clear
-php artisan cache:clear
-
-# 🔥 BARU CACHE SETELAH ENV MASUK
-php artisan config:cache
-
-# RUN SERVER
-php artisan serve --host=0.0.0.0 --port=${PORT}
