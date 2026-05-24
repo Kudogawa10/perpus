@@ -23,8 +23,8 @@ Quick checklist untuk setup production MyPerpus di Railway.
 
 ### 2. Add Database Services
 
-- [ ] MySQL Database added (auto-generates `DATABASE_URL`)
-- [ ] Redis added (auto-generates `REDIS_URL`)
+- [ ] MySQL Database added (provides `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQL_URL`)
+- [ ] Redis added (provides `REDISHOST`, `REDISUSER`, `REDISPORT`, `REDISPASSWORD`, `REDIS_URL`)
 - [ ] Both services status: **Running** (hijau)
 
 ### 3. Set Environment Variables
@@ -35,9 +35,12 @@ Quick checklist untuk setup production MyPerpus di Railway.
 - [ ] `APP_URL=https://your-app.up.railway.app` ← Update dengan domain Anda
 - [ ] `APP_KEY=base64:xxx...` (generate atau biarkan script generate)
 - [ ] `DB_CONNECTION=mysql`
+- [ ] MySQL reference variables added to PHP App (`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQL_URL`)
 - [ ] `CACHE_STORE=redis`
 - [ ] `QUEUE_CONNECTION=redis`
 - [ ] `SESSION_DRIVER=redis`
+- [ ] Redis reference variables added to PHP App (`REDISHOST`, `REDISUSER`, `REDISPORT`, `REDISPASSWORD`, `REDIS_URL`)
+- [ ] `REDIS_CLIENT=predis`
 - [ ] `MAIL_MAILER=log` (opsional: setup SMTP provider)
 - [ ] `ADMIN_EMAIL=admin@perpus.com`
 - [ ] `ADMIN_PASSWORD=SecurePass123`
@@ -46,11 +49,11 @@ Quick checklist untuk setup production MyPerpus di Railway.
 - [ ] `SESSION_ENCRYPT=true`
 - [ ] `SESSION_SECURE_COOKIE=true`
 
-### 4. Verify Connection Strings (Auto-Generated)
+### 4. Verify Service References
 
-Railway otomatis injected:
-- [ ] `DATABASE_URL` → MySQL
-- [ ] `REDIS_URL` → Redis (atau manual `REDIS_HOST`, `REDIS_PASSWORD`)
+PHP App Variables:
+- [ ] MySQL variables reference the MySQL service, for example `MYSQLHOST=${{MySQL.MYSQLHOST}}`
+- [ ] Redis variables reference the Redis service, for example `REDISHOST=${{Redis.REDISHOST}}`
 
 ## Deployment
 

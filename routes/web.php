@@ -34,22 +34,30 @@ use Inertia\Inertia;
 
 // Health check endpoint for Railway monitoring
 Route::get('/health', function () {
-    try {
-        // Test DB connection
-        \DB::connection()->getPdo();
-        $dbStatus = 'OK';
-    } catch (Exception $e) {
-        $dbStatus = 'ERROR: ' . $e->getMessage();
-    }
-    
-    return response()->json([
+    $statusCode = 200;
+    $dbStatus = 'OK';
+    $payload = [
         'status' => 'OK',
         'env' => app()->environment(),
         'debug' => config('app.debug'),
-        'db' => $dbStatus,
         'cache' => config('cache.default'),
-        'timestamp' => now()->toISOString()
-    ]);
+        'timestamp' => now()->toISOString(),
+    ];
+
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+    } catch (\Throwable $e) {
+        $statusCode = 503;
+        $dbStatus = 'ERROR';
+
+        if (config('app.debug')) {
+            $payload['db_error'] = $e->getMessage();
+        }
+    }
+
+    $payload['db'] = $dbStatus;
+
+    return response()->json($payload, $statusCode);
 });
 
 Route::get('/', function () {

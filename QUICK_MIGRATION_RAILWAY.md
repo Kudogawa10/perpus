@@ -5,12 +5,12 @@ Database sudah siap di Railway! Tinggal run migration. Berikut langkah-langkahny
 ## Koneksi Database Railway
 
 ```
-Host: crossover.proxy.rlwy.net
-Port: 54947
-User: root
-Password: UExPPuXrTIIlZrmtsWuRIzCDRfcITZCg
-Database: railway
-URL: mysql://root:UExPPuXrTIIlZrmtsWuRIzCDRfcITZCg@crossover.proxy.rlwy.net:54947/railway
+Host: [lihat Railway MySQL Variables: MYSQLHOST]
+Port: [lihat Railway MySQL Variables: MYSQLPORT]
+User: [lihat Railway MySQL Variables: MYSQLUSER]
+Password: [lihat Railway MySQL Variables: MYSQLPASSWORD]
+Database: [lihat Railway MySQL Variables: MYSQLDATABASE]
+URL: [lihat Railway MySQL Variables: MYSQL_URL]
 ```
 
 ## Option 1: Auto-Migrate saat Deploy (Recommended)
@@ -36,9 +36,9 @@ URL: mysql://root:UExPPuXrTIIlZrmtsWuRIzCDRfcITZCg@crossover.proxy.rlwy.net:5494
 4. Cari message:
    ```
    "APP_KEY invalid or missing, generating new one..."
-   "Parsing DATABASE_URL into DB_* env vars..."
+   "Parsing DATABASE_URL into missing DB_* env vars..."
    "Waiting for database..."
-   "Database available — running migrations and seeders"
+   "Database available - running migrations"
    "migrated successfully"
    ```
 
@@ -77,9 +77,9 @@ exit
 
 ```bash
 # Dari lokal
-mysql -h crossover.proxy.rlwy.net -P 54947 \
-  -u root -pUExPPuXrTIIlZrmtsWuRIzCDRfcITZCg \
-  railway < dump.sql
+mysql -h "$MYSQLHOST" -P "$MYSQLPORT" \
+  -u "$MYSQLUSER" -p"$MYSQLPASSWORD" \
+  "$MYSQLDATABASE" < dump.sql
 ```
 
 ---
@@ -96,8 +96,8 @@ mysql -h crossover.proxy.rlwy.net -P 54947 \
 ### Via MySQL CLI
 
 ```bash
-mysql -h crossover.proxy.rlwy.net -P 54947 -u root \
-  -pUExPPuXrTIIlZrmtsWuRIzCDRfcITZCg railway \
+mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u "$MYSQLUSER" \
+  -p"$MYSQLPASSWORD" "$MYSQLDATABASE" \
   -e "SHOW TABLES; SELECT COUNT(*) as TotalTables FROM information_schema.TABLES WHERE TABLE_SCHEMA='railway';"
 ```
 

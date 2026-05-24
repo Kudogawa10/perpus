@@ -39,7 +39,7 @@ Di Railway Dashboard, klik **"+ New"** dan tambahkan:
 
 **Konfigurasi:**
 - Version: `8.0` atau lebih baru
-- Railway otomatis menyediakan: `MYSQLHOST`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`
+- Railway menyediakan: `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQL_URL`
 
 ### B. Redis Cache
 
@@ -49,7 +49,7 @@ Di Railway Dashboard, klik **"+ New"** dan tambahkan:
 
 **Konfigurasi:**
 - Version: `latest`
-- Railway otomatis menyediakan: `REDIS_HOST`, `REDIS_PASSWORD`, `REDIS_PORT`
+- Railway menyediakan: `REDISHOST`, `REDISUSER`, `REDISPORT`, `REDISPASSWORD`, `REDIS_URL`
 
 ### C. PHP App (dari Dockerfile)
 
@@ -69,12 +69,12 @@ Di Railway Dashboard, klik **"+ New"** dan tambahkan:
 Di Railway Dashboard, untuk setiap service:
 
 1. **MySQL Database** → klik tab "Connect"
-2. Copy connection string atau railway akan auto-generate `DATABASE_URL`
-3. **Redis** → copy `REDIS_URL` atau gunakan host+port terpisah
+2. Di service PHP App, referensikan variable MySQL, misalnya `MYSQLHOST=${{MySQL.MYSQLHOST}}`
+3. **Redis** → referensikan `REDIS_URL` atau host+port terpisah dari service Redis
 
-**Railway secara otomatis membuat:**
-- `DATABASE_URL` = `mysql://user:pass@host:port/database`
-- `REDIS_URL` = `redis://:password@host:port`
+**Nama variable Railway:**
+- MySQL: `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQL_URL`
+- Redis: `REDISHOST`, `REDISUSER`, `REDISPORT`, `REDISPASSWORD`, `REDIS_URL`
 
 ---
 
@@ -90,15 +90,20 @@ APP_NAME=MyPerpus
 APP_ENV=production
 APP_DEBUG=false
 APP_TIMEZONE=Asia/Jakarta
-APP_URL=https://your-app.up.railway.app  # Ganti dengan domain Railway Anda
+APP_URL=https://your-app.up.railway.app
 
 # Log
-LOG_CHANNEL=stack
+LOG_CHANNEL=stderr
 LOG_LEVEL=warning
 
-# Database (Railway otomatis, tapi bisa override)
+# Database (reference dari MySQL service)
 DB_CONNECTION=mysql
-# DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_DATABASE auto-filled dari MySQL plugin
+MYSQLHOST=${{MySQL.MYSQLHOST}}
+MYSQLPORT=${{MySQL.MYSQLPORT}}
+MYSQLUSER=${{MySQL.MYSQLUSER}}
+MYSQLPASSWORD=${{MySQL.MYSQLPASSWORD}}
+MYSQLDATABASE=${{MySQL.MYSQLDATABASE}}
+MYSQL_URL=${{MySQL.MYSQL_URL}}
 
 # Cache & Session
 CACHE_STORE=redis
@@ -108,8 +113,13 @@ SESSION_LIFETIME=120
 SESSION_ENCRYPT=true
 SESSION_SECURE_COOKIE=true
 
-# Redis (Railway otomatis, tapi bisa override)
-# REDIS_HOST, REDIS_PASSWORD, REDIS_PORT auto-filled dari Redis plugin
+# Redis (reference dari Redis service)
+REDIS_CLIENT=predis
+REDISHOST=${{Redis.REDISHOST}}
+REDISUSER=${{Redis.REDISUSER}}
+REDISPORT=${{Redis.REDISPORT}}
+REDISPASSWORD=${{Redis.REDISPASSWORD}}
+REDIS_URL=${{Redis.REDIS_URL}}
 
 # Mail (gunakan log untuk testing, atau setup SMTP provider)
 MAIL_MAILER=log
@@ -122,10 +132,11 @@ ADMIN_PASSWORD=YourSecurePasswordHere
 
 # Security
 SANCTUM_STATEFUL_DOMAINS=your-app.up.railway.app,localhost
-SESSION_DOMAIN=railway.app
+SESSION_DOMAIN=
 
 # Migrations
-RUN_MIGRATIONS=true  # Auto-run migrations saat deploy
+RUN_MIGRATIONS=true
+RUN_SEEDERS=true
 
 # Port
 PORT=8080
@@ -221,8 +232,8 @@ Di Railway Dashboard, PHP App → Settings → Public Networking:
 
 **Solusi:**
 - Pastikan MySQL service sudah running (status hijau di dashboard)
-- Railway otomatis set `DATABASE_URL`, tapi bisa perlu manual `DB_HOST`, `DB_USERNAME`, dll
-- Cek di Variables sudah benar
+- Pastikan PHP App punya reference variable MySQL (`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQL_URL`)
+- Cek di Variables sudah benar dan sudah di-deploy
 - Tunggu MySQL fully start (~30s setelah deploy)
 
 ### 3. Migrations Gagal saat Deploy
@@ -242,7 +253,7 @@ Di Railway Dashboard, PHP App → Settings → Public Networking:
 
 **Solusi:**
 - Redis service harus running (hijau)
-- Pastikan `REDIS_HOST`, `REDIS_PASSWORD`, `REDIS_PORT` benar di Variables
+- Pastikan `REDISHOST`, `REDISPORT`, `REDISPASSWORD`, dan `REDIS_URL` benar di Variables
 - Atau set `CACHE_STORE=file` temporary untuk testing
 
 ### 5. File Upload / Storage Error

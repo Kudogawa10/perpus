@@ -3,12 +3,12 @@
 ## Connection Details Railway MySQL
 
 ```
-Host: crossover.proxy.rlwy.net
-Port: 54947
-User: root
-Database: railway
+Host: [lihat Railway MySQL Variables: MYSQLHOST]
+Port: [lihat Railway MySQL Variables: MYSQLPORT]
+User: [lihat Railway MySQL Variables: MYSQLUSER]
+Database: [lihat Railway MySQL Variables: MYSQLDATABASE]
 Password: [See Railway dashboard]
-Connection: mysql://root:password@crossover.proxy.rlwy.net:54947/railway
+Connection: [lihat Railway MySQL Variables: MYSQL_URL]
 ```
 
 ## Step 1: Setup Environment Variables di Railway Dashboard
@@ -16,18 +16,25 @@ Connection: mysql://root:password@crossover.proxy.rlwy.net:54947/railway
 Pastikan sebelum migrasi, set di Railway Variables:
 
 ```env
-# Database - Railway otomatis inject DATABASE_URL
+# Database - referensikan dari Railway MySQL service
 DB_CONNECTION=mysql
-DB_HOST=
-DB_PORT=3306
-DB_DATABASE=
-DB_USERNAME=
-DB_PASSWORD=
+MYSQLHOST=${{MySQL.MYSQLHOST}}
+MYSQLPORT=${{MySQL.MYSQLPORT}}
+MYSQLUSER=${{MySQL.MYSQLUSER}}
+MYSQLPASSWORD=${{MySQL.MYSQLPASSWORD}}
+MYSQLDATABASE=${{MySQL.MYSQLDATABASE}}
+MYSQL_URL=${{MySQL.MYSQL_URL}}
 
 # Cache & Session HARUS gunakan Redis
 CACHE_STORE=redis
 QUEUE_CONNECTION=redis
 SESSION_DRIVER=redis
+REDIS_CLIENT=predis
+REDISHOST=${{Redis.REDISHOST}}
+REDISUSER=${{Redis.REDISUSER}}
+REDISPORT=${{Redis.REDISPORT}}
+REDISPASSWORD=${{Redis.REDISPASSWORD}}
+REDIS_URL=${{Redis.REDIS_URL}}
 
 # Migration
 RUN_MIGRATIONS=true
@@ -54,7 +61,7 @@ railway console php artisan db:seed --force
 ### Option C: Auto-migrate on Deploy
 
 Set `RUN_MIGRATIONS=true` di Railway Variables, redeploy aplikasi. docker/start.sh akan otomatis:
-1. Parse DATABASE_URL
+1. Map MySQL/Redis Railway variables
 2. Wait untuk MySQL ready (~30s)
 3. Run migrations
 4. Run seeder
@@ -137,7 +144,7 @@ database/migrations/
 
 ```bash
 # 1. Test koneksi ke Railway
-mysql -h crossover.proxy.rlwy.net -P 54947 -u root -p [password] -e "SHOW DATABASES;"
+mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u "$MYSQLUSER" -p"$MYSQLPASSWORD" -e "SHOW DATABASES;"
 
 # 2. Access Railway container
 railway shell
@@ -168,7 +175,9 @@ exit
 Di Railway Dashboard atau via CLI:
 
 ```bash
-railway console mysql -h [host] -u root -p [pass] -e "USE railway; SHOW TABLES; SELECT COUNT(*) as 'Total Tables' FROM information_schema.TABLES WHERE TABLE_SCHEMA='railway';"
+railway shell
+mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u "$MYSQLUSER" -p"$MYSQLPASSWORD" "$MYSQLDATABASE" \
+  -e "SHOW TABLES; SELECT COUNT(*) as 'Total Tables' FROM information_schema.TABLES WHERE TABLE_SCHEMA='$MYSQLDATABASE';"
 ```
 
 Seharusnya ada ~20+ tables yang berhasil dibuat.
@@ -181,16 +190,17 @@ Seharusnya ada ~20+ tables yang berhasil dibuat.
 
 ```bash
 # Via CLI
-railway console mysqldump -u root -p [password] railway > /tmp/railway_backup.sql
+railway shell
+mysqldump -h "$MYSQLHOST" -P "$MYSQLPORT" -u "$MYSQLUSER" -p"$MYSQLPASSWORD" "$MYSQLDATABASE" > /tmp/railway_backup.sql
 
 # Via remote connection
-mysqldump -h crossover.proxy.rlwy.net -P 54947 -u root -p[password] railway > ~/railway_backup.sql
+mysqldump -h "$MYSQLHOST" -P "$MYSQLPORT" -u "$MYSQLUSER" -p"$MYSQLPASSWORD" "$MYSQLDATABASE" > ~/railway_backup.sql
 ```
 
 ### Restore ke Railway
 
 ```bash
-mysql -h crossover.proxy.rlwy.net -P 54947 -u root -p[password] railway < ~/railway_backup.sql
+mysql -h "$MYSQLHOST" -P "$MYSQLPORT" -u "$MYSQLUSER" -p"$MYSQLPASSWORD" "$MYSQLDATABASE" < ~/railway_backup.sql
 ```
 
 ---

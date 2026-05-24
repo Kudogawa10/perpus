@@ -30,11 +30,17 @@ APP_TIMEZONE=Asia/Jakarta
 APP_URL=https://myperpus-productions.up.railway.app
 
 # Log
-LOG_CHANNEL=stack
+LOG_CHANNEL=stderr
 LOG_LEVEL=warning
 
-# Database (leave empty — Railway auto-fills via DATABASE_URL from MySQL plugin)
+# Database - reference dari MySQL service
 DB_CONNECTION=mysql
+MYSQLHOST=${{MySQL.MYSQLHOST}}
+MYSQLPORT=${{MySQL.MYSQLPORT}}
+MYSQLUSER=${{MySQL.MYSQLUSER}}
+MYSQLPASSWORD=${{MySQL.MYSQLPASSWORD}}
+MYSQLDATABASE=${{MySQL.MYSQLDATABASE}}
+MYSQL_URL=${{MySQL.MYSQL_URL}}
 
 # Cache & Session — MUST USE REDIS (not file!)
 CACHE_STORE=redis
@@ -43,6 +49,14 @@ SESSION_DRIVER=redis
 SESSION_LIFETIME=120
 SESSION_ENCRYPT=true
 SESSION_SECURE_COOKIE=true
+
+# Redis - reference dari Redis service
+REDIS_CLIENT=predis
+REDISHOST=${{Redis.REDISHOST}}
+REDISUSER=${{Redis.REDISUSER}}
+REDISPORT=${{Redis.REDISPORT}}
+REDISPASSWORD=${{Redis.REDISPASSWORD}}
+REDIS_URL=${{Redis.REDIS_URL}}
 
 # Mail
 MAIL_MAILER=log
@@ -57,6 +71,7 @@ VITE_APP_NAME=MyPerpus
 
 # Railway
 RUN_MIGRATIONS=true
+RUN_SEEDERS=true
 PORT=8080
 
 # Admin (for seeding)
@@ -65,24 +80,24 @@ ADMIN_PASSWORD=YourSecurePassword123
 
 # Security
 SANCTUM_STATEFUL_DOMAINS=localhost,127.0.0.1,::1,myperpus-productions.up.railway.app
-SESSION_DOMAIN=railway.app
+SESSION_DOMAIN=
 ```
 
 ### Step 3: Verify Database Service
 
 1. Di Railway Dashboard, klik **MySQL Database** service
 2. Klik **Connect**
-3. Copy connection details (Railway akan auto-inject):
-   - `DATABASE_URL` → otomatis ke PHP App
-   - `MYSQLHOST`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE` → docker/start.sh akan parse
+3. Di PHP App Variables, referensikan:
+   - `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQL_URL`
+   - `docker/start.sh` akan map variable ini ke Laravel `DB_*`
 
-**Jangan perlu manual set DB_HOST, DB_PORT, dll** — Railway auto-fills via DATABASE_URL.
+**Jangan hardcode password di repo.** Gunakan Railway reference variable seperti `${{MySQL.MYSQLPASSWORD}}`.
 
 ### Step 4: Verify Redis Service
 
 1. Di Railway Dashboard, klik **Redis** service
 2. Klik **Connect**
-3. Railway auto-injects `REDIS_URL` atau `REDIS_HOST`, `REDIS_PASSWORD`, `REDIS_PORT`
+3. Di PHP App Variables, referensikan `REDIS_URL`, `REDISHOST`, `REDISUSER`, `REDISPORT`, `REDISPASSWORD`
 
 ### Step 5: Redeploy
 
@@ -110,7 +125,8 @@ railway logs -f
 **Checklist saat deploy:**
 - ✅ Build successful (tidak ada Docker error)
 - ✅ Container starting
-- ✅ "APP_KEY generated" atau "Parsing DATABASE_URL"
+- ✅ "APP_KEY generated" atau `APP_KEY` sudah diset
+- ✅ "Parsing DATABASE_URL" atau MySQL vars terdeteksi
 - ✅ Database connection successful
 - ✅ Migrations running (jika RUN_MIGRATIONS=true)
 - ✅ App listening on port 8080
@@ -140,13 +156,13 @@ https://myperpus-productions.up.railway.app
 
 #### **Error: "SQLSTATE[HY000]: General error"**
 - MySQL service belum running, atau
-- DATABASE_URL tidak di-parse dengan benar
+- MySQL reference variables belum terpasang di PHP App
 - **Fix:** Cek logs untuk "Parsing DATABASE_URL" message
 - Manual test: `railway console php artisan tinker` → `DB::connection()->getPdo()`
 
 #### **Error: "Call to undefined function Redis::..."**
 - Redis tidak running
-- **Fix:** Cek Redis service status (harus hijau)
+- **Fix:** Cek Redis service status dan reference variables `REDISHOST`/`REDIS_URL`
 
 #### **Error: "Base table or view not found: 'myperpus.users'"**
 - Migrations tidak jalan
@@ -178,8 +194,8 @@ https://myperpus-productions.up.railway.app
 ## Quick Fix Checklist
 
 - [ ] All required variables set in Railway Variables
-- [ ] DATABASE_URL auto-populated (MySQL plugin)
-- [ ] REDIS_* auto-populated (Redis plugin)
+- [ ] MySQL variables direferensikan di PHP App (`MYSQLHOST`, `MYSQL_URL`, dll)
+- [ ] Redis variables direferensikan di PHP App (`REDISHOST`, `REDIS_URL`, dll)
 - [ ] CACHE_STORE=redis (not file)
 - [ ] QUEUE_CONNECTION=redis (not sync)
 - [ ] SESSION_DRIVER=redis (not file)

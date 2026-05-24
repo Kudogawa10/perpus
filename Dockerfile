@@ -2,9 +2,9 @@
 # Stages: node builder -> composer builder -> final PHP image
 
 #### Node builder: build front-end assets
-FROM node:18-bullseye-slim AS node_builder
+FROM node:20-bookworm-slim AS node_builder
 WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
+ENV PATH=/app/node_modules/.bin:$PATH
 COPY package*.json ./
 RUN npm ci --silent
 COPY . .
@@ -23,7 +23,7 @@ COPY . .
 RUN composer dump-autoload --optimize
 
 #### Final image: PHP runtime
-FROM php:8.4-cli-bullseye
+FROM php:8.4-cli-bookworm
 WORKDIR /var/www/html
 
 # System deps and PHP extensions required by Laravel
@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Copy application files from composer builder (use same app path)
 COPY --from=composer_builder /var/www/html/ /var/www/html/
+COPY --from=composer_builder /usr/bin/composer /usr/bin/composer
 
 # Copy built frontend assets from node builder
 COPY --from=node_builder /app/public/build /var/www/html/public/build
@@ -51,7 +52,8 @@ RUN chmod +x /usr/local/bin/start.sh
 
 RUN mkdir -p storage/framework/sessions \
     storage/framework/views \
-    storage/framework/cache \
+    storage/framework/cache/data \
+    storage/app/public \
     storage/logs \
     bootstrap/cache
 
@@ -61,11 +63,11 @@ RUN chmod -R 777 storage bootstrap/cache
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache || true
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache || true
 
-ENV PORT 8080
+ENV PORT=8080
 EXPOSE 8080
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-CMD ["start.sh"]
+CMD ["/usr/local/bin/start.sh"]
 
 # Upload limit
 RUN echo "upload_max_filesize=64M" > /usr/local/etc/php/conf.d/uploads.ini
