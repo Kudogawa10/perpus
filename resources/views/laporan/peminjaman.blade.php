@@ -242,7 +242,7 @@
             </div>
         </div>
         <div class="kop-judul">
-            <h1>Laporan Peminjaman Buku</h1>
+            <h1>Laporan Peminjaman & pengembalian Buku</h1>
             <p>Dokumen Resmi &bull; Dicetak: {{ now()->translatedFormat('d F Y, H:i') }} WIB</p>
         </div>
     </div>

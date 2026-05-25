@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Kondisi Buku dari Petugas - MyPerpus</title>
+    <title>Laporan Peminjaman & pengembalian dan Kondisi Buku dari Petugas - MyPerpus</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -247,7 +247,7 @@
             </div>
         </div>
         <div class="kop-judul">
-            <h1>Laporan Kondisi Buku</h1>
+            <h1>Laporan Peminjaman & pengembalian dan Kondisi Buku</h1>
             <p>Laporan dari Petugas • Dicetak: {{ now()->translatedFormat('d F Y, H:i') }} WIB</p>
         </div>
     </div>
