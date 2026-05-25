@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Ulasan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -21,6 +22,29 @@ class UlasanController extends Controller
         }
         $ulasan = $query->latest()->paginate(30)->withQueryString();
         return Inertia::render('Admin/Ulasan', [ 'ulasan' => $ulasan ]);
+    }
+
+    public function export(Request $request)
+    {
+        $query = Ulasan::with(['user', 'buku', 'balasanAdmin']);
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('komentar', 'like', "%{$search}%")
+                  ->orWhereHas('user', fn ($q2) => $q2->where('name', 'like', "%{$search}%"))
+                  ->orWhereHas('buku', fn ($q3) => $q3->where('judul', 'like', "%{$search}%"));
+            });
+        }
+
+        $ulasan = $query->latest()->get();
+
+        $pdf = Pdf::loadView('laporan.ulasan', [
+            'ulasan' => $ulasan,
+            'admin' => $request->user(),
+            'filters' => $request->only('search'),
+        ])->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-ulasan-' . now()->format('Y-m-d') . '.pdf');
     }
 
     public function destroy(Ulasan $ulasan)

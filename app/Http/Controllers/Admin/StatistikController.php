@@ -58,6 +58,8 @@ class StatistikController extends Controller
 
     public function export(Request $request)
     {
+        Peminjaman::sinkronkanStatusDanDenda();
+
         $tahun = $request->get('tahun', now()->year);
 
         $peminjaman = Peminjaman::with(['user', 'buku', 'petugas'])

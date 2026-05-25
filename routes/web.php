@@ -246,6 +246,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Kelola Ulasan
     Route::get('/ulasan', [\App\Http\Controllers\Admin\UlasanController::class, 'index'])->name('ulasan.index');
+    Route::get('/ulasan/export', [\App\Http\Controllers\Admin\UlasanController::class, 'export'])->name('ulasan.export');
     Route::patch('/ulasan/{ulasan}', [\App\Http\Controllers\Admin\UlasanController::class, 'update'])->name('ulasan.update');
     Route::delete('/ulasan/{ulasan}', [\App\Http\Controllers\Admin\UlasanController::class, 'destroy'])->name('ulasan.destroy');
 });

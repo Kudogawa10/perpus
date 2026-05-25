@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AppLayout from '@/Layouts/AppLayout';
 import { usePage } from '@inertiajs/react';
+import { Download } from 'lucide-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -45,8 +46,15 @@ export default function UlasanIndex() {
         <AppLayout title="Kelola Ulasan">
             <div className="max-w-5xl mx-auto space-y-6">
                 <div className="page-header">
-                    <h1 className="page-title">Kelola Ulasan</h1>
-                    <p className="page-subtitle">Lihat, sunting, atau hapus ulasan pengguna</p>
+                    <div className="flex items-start justify-between gap-4">
+                        <div>
+                            <h1 className="page-title">Kelola Ulasan</h1>
+                            <p className="page-subtitle">Lihat, sunting, atau hapus ulasan pengguna</p>
+                        </div>
+                        <a href="/admin/ulasan/export" className="btn-secondary text-sm whitespace-nowrap" title="Export laporan ulasan ke PDF">
+                            <Download className="w-4 h-4"/> Export PDF
+                        </a>
+                    </div>
                 </div>
 
                 <div className="space-y-3">

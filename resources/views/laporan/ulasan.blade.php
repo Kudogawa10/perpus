@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Peminjaman & pengembalian Buku - MyPerpus</title>
+    <title>Laporan Ulasan Buku - MyPerpus</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -145,24 +145,35 @@
         tbody td.bold { font-weight: 700; color: #0f172a; }
 
         .muted { color: #94a3b8; }
-        .mono { font-family: DejaVu Sans Mono, monospace; font-size: 8.5px; }
+        .comment { line-height: 1.45; }
+        .reply {
+            color: #475569;
+            font-size: 9px;
+            line-height: 1.4;
+            margin-top: 4px;
+        }
+
+        .rating {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 999px;
+            background: #fef3c7;
+            color: #92400e;
+            font-size: 9px;
+            font-weight: 700;
+        }
 
         .badge {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 2px 7px;
             border-radius: 999px;
             font-size: 8px;
             font-weight: 700;
             text-transform: uppercase;
         }
 
-        .badge-menunggu { background: #fef3c7; color: #92400e; }
-        .badge-disetujui { background: #dbeafe; color: #1d4ed8; }
-        .badge-dipinjam { background: #e0f2fe; color: #0369a1; }
-        .badge-pengajuan_kembali { background: #ede9fe; color: #6d28d9; }
-        .badge-dikembalikan { background: #dcfce7; color: #166534; }
-        .badge-terlambat { background: #fee2e2; color: #991b1b; }
-        .badge-ditolak { background: #f1f5f9; color: #475569; }
+        .badge-dibalas { background: #dcfce7; color: #166534; }
+        .badge-belum { background: #f1f5f9; color: #475569; }
 
         .footer-section {
             margin-top: 20px;
@@ -230,6 +241,11 @@
 </head>
 <body>
 
+@php
+    $averageRating = $ulasan->count() > 0 ? round($ulasan->avg('rating'), 1) : 0;
+    $repliedCount = $ulasan->filter(fn ($item) => filled($item->balasan))->count();
+@endphp
+
 <div class="kop">
     <div class="kop-inner">
         <div class="kop-brand">
@@ -242,7 +258,7 @@
             </div>
         </div>
         <div class="kop-judul">
-            <h1>Laporan Peminjaman Buku</h1>
+            <h1>Laporan Ulasan Buku</h1>
             <p>Dokumen Resmi &bull; Dicetak: {{ now()->translatedFormat('d F Y, H:i') }} WIB</p>
         </div>
     </div>
@@ -250,24 +266,30 @@
 
 <div class="meta-box">
     <div class="meta-item">
-        <label>Tahun Laporan</label>
-        <span>{{ $tahun }}</span>
+        <label>Total Ulasan</label>
+        <span>{{ $ulasan->count() }} Data</span>
     </div>
     <div class="meta-item">
-        <label>Total Transaksi</label>
-        <span>{{ $peminjaman->count() }} Data</span>
+        <label>Rata-rata Rating</label>
+        <span>{{ number_format($averageRating, 1, ',', '.') }}/5</span>
     </div>
     <div class="meta-item">
-        <label>Dikembalikan</label>
-        <span>{{ $peminjaman->where('status', \App\Models\Peminjaman::STATUS_DIKEMBALIKAN)->count() }} Data</span>
+        <label>Sudah Dibalas</label>
+        <span>{{ $repliedCount }} Ulasan</span>
     </div>
+    @if(!empty($filters['search']))
+    <div class="meta-item">
+        <label>Filter Pencarian</label>
+        <span>{{ $filters['search'] }}</span>
+    </div>
+    @endif
     <div class="meta-item">
         <label>Dicetak Oleh</label>
         <span>{{ $admin->name }}</span>
     </div>
     <div class="meta-item">
         <label>Nomor Dokumen</label>
-        <span>LPP/{{ now()->format('Ymd') }}/{{ str_pad($peminjaman->count(), 3, '0', STR_PAD_LEFT) }}</span>
+        <span>LPU/{{ now()->format('Ymd') }}/{{ str_pad($ulasan->count(), 3, '0', STR_PAD_LEFT) }}</span>
     </div>
 </div>
 
@@ -275,54 +297,51 @@
     <thead>
         <tr>
             <th class="center" style="width:28px">No</th>
-            <th style="width:75px">Kode</th>
-            <th style="width:115px">Peminjam</th>
-            <th style="width:150px">Buku</th>
-            <th class="center" style="width:70px">Tgl Pinjam</th>
-            <th class="center" style="width:78px">Rencana Kembali</th>
-            <th class="center" style="width:82px">Tgl Pengembalian</th>
-            <th class="center" style="width:70px">Status</th>
-            <th class="center" style="width:62px">Denda</th>
-            <th style="width:105px">Petugas</th>
+            <th style="width:92px">Tanggal</th>
+            <th style="width:110px">Pengulas</th>
+            <th style="width:140px">Buku</th>
+            <th class="center" style="width:55px">Rating</th>
+            <th style="width:230px">Ulasan</th>
+            <th style="width:180px">Balasan Admin</th>
+            <th class="center" style="width:65px">Status</th>
         </tr>
     </thead>
     <tbody>
-        @forelse($peminjaman as $item)
-            @php
-                $isReturned = $item->status === \App\Models\Peminjaman::STATUS_DIKEMBALIKAN;
-                $tanggalPengembalian = $isReturned ? $item->tanggal_kembali_aktual : null;
-                $statusClass = 'badge-' . str_replace(' ', '_', $item->status);
-            @endphp
-            <tr>
-                <td class="center">{{ $loop->iteration }}</td>
-                <td class="mono">{{ $item->kode_peminjaman }}</td>
-                <td class="bold">{{ $item->user->name ?? '-' }}</td>
-                <td>{{ $item->buku->judul ?? '-' }}</td>
-                <td class="center">{{ optional($item->tanggal_pinjam)->format('d/m/Y') ?? '-' }}</td>
-                <td class="center">{{ optional($item->tanggal_kembali_rencana)->format('d/m/Y') ?? '-' }}</td>
-                <td class="center">
-                    @if($tanggalPengembalian)
-                        {{ $tanggalPengembalian->format('d/m/Y') }}
-                    @elseif($isReturned)
-                        <span class="muted">Belum tercatat</span>
-                    @else
-                        <span class="muted">-</span>
-                    @endif
-                </td>
-                <td class="center">
-                    <span class="badge {{ $statusClass }}">{{ str_replace('_', ' ', ucfirst($item->status)) }}</span>
-                </td>
-                <td class="center">
-                    {{ $item->denda > 0 ? 'Rp ' . number_format($item->denda, 0, ',', '.') : '-' }}
-                </td>
-                <td>{{ $item->petugas->name ?? '-' }}</td>
-            </tr>
+        @forelse($ulasan as $item)
+        <tr>
+            <td class="center">{{ $loop->iteration }}</td>
+            <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y H:i') }}</td>
+            <td class="bold">{{ $item->user->name ?? '-' }}</td>
+            <td>{{ $item->buku->judul ?? '-' }}</td>
+            <td class="center"><span class="rating">{{ $item->rating }}/5</span></td>
+            <td class="comment">{{ $item->komentar ?: '-' }}</td>
+            <td>
+                @if($item->balasan)
+                    <div>{{ $item->balasan }}</div>
+                    <div class="reply">
+                        {{ $item->balasanAdmin->name ?? 'Admin' }}
+                        @if($item->balasan_dibalas_pada)
+                            &bull; {{ \Carbon\Carbon::parse($item->balasan_dibalas_pada)->format('d/m/Y H:i') }}
+                        @endif
+                    </div>
+                @else
+                    <span class="muted">Belum ada balasan</span>
+                @endif
+            </td>
+            <td class="center">
+                @if($item->balasan)
+                    <span class="badge badge-dibalas">Dibalas</span>
+                @else
+                    <span class="badge badge-belum">Belum</span>
+                @endif
+            </td>
+        </tr>
         @empty
-            <tr>
-                <td colspan="10" class="center" style="padding: 20px; color: #94a3b8;">
-                    Tidak ada data peminjaman untuk tahun ini.
-                </td>
-            </tr>
+        <tr>
+            <td colspan="8" class="center" style="padding: 20px; color: #94a3b8;">
+                Tidak ada data ulasan.
+            </td>
+        </tr>
         @endforelse
     </tbody>
 </table>
@@ -330,8 +349,8 @@
 <div class="footer-section">
     <div class="footer-kiri">
         <strong>Catatan:</strong>
-        Kolom tanggal pengembalian menampilkan tanggal pengembalian aktual hanya untuk
-        transaksi berstatus dikembalikan. Dokumen ini sah sebagai arsip peminjaman perpustakaan.
+        Dokumen ini merupakan laporan resmi ulasan pengguna terhadap koleksi buku MyPerpus.
+        Data digunakan untuk evaluasi kualitas koleksi dan layanan perpustakaan.
     </div>
     <div class="ttd-box">
         <div class="ttd-kota">Tangerang, {{ now()->translatedFormat('d F Y') }}</div>
@@ -342,7 +361,7 @@
 </div>
 
 <div class="page-footer">
-    MyPerpus — Sistem Informasi Perpustakaan Digital &bull; Laporan Peminjaman Buku &bull; Halaman <span class="pagenum"></span>
+    MyPerpus — Sistem Informasi Perpustakaan Digital &bull; Laporan Ulasan Buku &bull; Halaman <span class="pagenum"></span>
 </div>
 
 </body>
